@@ -9,15 +9,29 @@ import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    public static ImageView imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
-        ImageView imageView = (ImageView) findViewById(R.id.imageProfile);
-        imageView.setOnClickListener(this);
+       imageView  = (ImageView) findViewById(R.id.imageProfile);
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        imageView.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        imageView.setOnClickListener(null);
     }
 
     @Override

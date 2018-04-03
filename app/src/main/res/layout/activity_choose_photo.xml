@@ -16,7 +16,8 @@
         android:id="@+id/takePhoto"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
-        android:text="Сделать фото" />
+        android:text="Сделать фото"
+        android:onClick="onClick"/>
 
     <Button
         android:id="@+id/choosePhoto"
