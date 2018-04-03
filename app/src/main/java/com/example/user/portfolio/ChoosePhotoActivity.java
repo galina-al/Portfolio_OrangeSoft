@@ -28,14 +28,12 @@ public class ChoosePhotoActivity extends AppCompatActivity implements View.OnCli
 
         btn_takePhoto = (Button) findViewById(R.id.takePhoto);
         btn_choosePhoto = (Button) findViewById(R.id.choosePhoto);
-        imageView = (ImageView) findViewById(R.id.photo);
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        imageView.setOnClickListener(this);
         btn_takePhoto.setOnClickListener(this);
         btn_choosePhoto.setOnClickListener(this);
     }
@@ -43,7 +41,6 @@ public class ChoosePhotoActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onStop() {
         super.onStop();
-        imageView.setOnClickListener(null);
         btn_takePhoto.setOnClickListener(null);
         btn_choosePhoto.setOnClickListener(null);
     }

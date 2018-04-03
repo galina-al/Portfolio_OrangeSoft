@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
 
-       imageView  = (ImageView) findViewById(R.id.imageProfile);
+       imageView  = (ImageView) findViewById(R.id.photo);
 
 
     }
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
 
         switch (view.getId()){
-            case R.id.imageProfile:
+            case R.id.photo:
                 Intent intent = new Intent(this, ChoosePhotoActivity.class);
                 startActivity(intent);
                 break;

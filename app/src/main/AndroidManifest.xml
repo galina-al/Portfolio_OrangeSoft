@@ -3,6 +3,7 @@
     package="com.example.user.portfolio">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Portfolio"
@@ -16,7 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChoosePhotoActivity"></activity>
+        <activity android:name=".ChoosePhotoActivity"
+            android:theme="@style/AppTheme.Main"></activity>
     </application>
 
 </manifest>
