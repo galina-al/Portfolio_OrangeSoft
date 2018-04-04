@@ -4,22 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="bottom"
     android:orientation="vertical"
-    tools:context="com.example.user.portfolio.ChoosePhotoActivity"
-    android:gravity="center_horizontal">
+    tools:context="com.example.user.portfolio.ChoosePhotoActivity">
 
+    <View
+        android:id="@+id/close_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></View>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@drawable/shadow"></View>
 
-    <Button
-        android:id="@+id/takePhoto"
-        android:layout_width="175dp"
-        android:layout_height="wrap_content"
-        android:text="Сделать фото"
-        android:onClick="onClick"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:background="@color/backgroundChoose"
+        android:theme="@style/Base.Theme.AppCompat.Dialog.Alert">
 
-    <Button
-        android:id="@+id/choosePhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Выбрать из галереи" />
+        <Button
+            android:id="@+id/takePhoto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Сделать фото" />
+
+        <Button
+            android:id="@+id/choosePhoto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Выбрать фото" />
+    </LinearLayout>
 
 </LinearLayout>

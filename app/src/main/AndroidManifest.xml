@@ -18,7 +18,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChoosePhotoActivity"
-            android:theme="@style/AppTheme.Main"></activity>
+            android:theme="@style/AppTheme.Main"
+            android:launchMode="singleTask"></activity>
     </application>
 
 </manifest>
