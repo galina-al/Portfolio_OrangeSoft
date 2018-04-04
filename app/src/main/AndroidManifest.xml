@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.portfolio">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -18,8 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChoosePhotoActivity"
-            android:theme="@style/AppTheme.Main"
-            android:launchMode="singleTask"></activity>
+            android:theme="@style/AppTheme.Main"></activity>
     </application>
 
 </manifest>

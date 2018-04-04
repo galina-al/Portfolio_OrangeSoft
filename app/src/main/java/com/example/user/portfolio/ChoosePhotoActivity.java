@@ -11,8 +11,8 @@ import android.widget.LinearLayout;
 public class ChoosePhotoActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAKE_RESULT = "take result";
-    public static final int TAKE_PHOTO = 1;
-    public static final int CHOOSE_PHOTO = 2;
+    public static final int TAKE_PHOTO = 4;
+    public static final int PICK_PHOTO = 5;
     private Button btn_takePhoto;
     private Button btn_choosePhoto;
     private View closeView;
@@ -55,7 +55,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 break;
             case R.id.choosePhoto:
-                intent.putExtra(TAKE_RESULT, CHOOSE_PHOTO);
+                intent.putExtra(TAKE_RESULT, PICK_PHOTO);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
                 break;
