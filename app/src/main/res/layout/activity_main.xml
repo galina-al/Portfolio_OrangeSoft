@@ -16,28 +16,46 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll">
 
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical">
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/photo"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
-                    android:src="@drawable/buffon_big"
-                    android:scaleType="centerCrop"/>
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/buffon_big" />
 
-            </FrameLayout>
+                <HorizontalScrollView
+                    android:id="@+id/hScroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp">
+
+                    <LinearLayout
+                        android:id="@+id/hLayoutForPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+
+            </LinearLayout>
+
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
 
     </android.support.design.widget.AppBarLayout>
+
 
     <include layout="@layout/content_scrolling" />
 

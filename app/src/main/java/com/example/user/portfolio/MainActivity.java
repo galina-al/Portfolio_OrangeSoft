@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView imageView;
+    private LinearLayout hLayoutForPhoto;
     private boolean start = true;
     public static final int BUTTONS_REQUEST_CODE = 1;
     public static final int CAMERA_REQUEST_CODE = 2;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         imageView = (ImageView) findViewById(R.id.photo);
+        hLayoutForPhoto = (LinearLayout) findViewById(R.id.hLayoutForPhoto);
 
 
     }
@@ -38,12 +41,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
         imageView.setOnClickListener(this);
+        hLayoutForPhoto.setOnClickListener(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         imageView.setOnClickListener(null);
+        hLayoutForPhoto.setOnClickListener(null);
     }
 
     @Override
@@ -56,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startActivityForResult(intent, BUTTONS_REQUEST_CODE);
                     start = false;
                 }
+                break;
+            case R.id.hLayoutForPhoto:
+
                 break;
         }
     }

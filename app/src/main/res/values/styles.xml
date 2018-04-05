@@ -16,4 +16,8 @@
        <item name="android:backgroundDimEnabled">false</item>
    </style>
 
+    <style name="AppTheme.ShowPhoto">
+        <item name="android:background">#000000</item>
+    </style>
+
 </resources>

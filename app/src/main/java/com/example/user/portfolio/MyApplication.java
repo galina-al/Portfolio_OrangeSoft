@@ -4,9 +4,6 @@ import android.app.Application;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-/**
- * Created by User on 03.04.2018.
- */
 
 public class MyApplication extends Application {
 
@@ -15,5 +12,6 @@ public class MyApplication extends Application {
         super.onCreate();
 
         ImageLoader.getInstance().init(ImageHelper.getImageLoaderConfig(this));
+        DbHelper.init(this);
     }
 }
