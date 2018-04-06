@@ -1,5 +1,6 @@
 package com.example.user.portfolio;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.ImageView;
@@ -24,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager pager;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,20 +48,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         HeaderPhotoDao dao = DbHelper.getDb().getHeaderPhotoDao();
         List<HeaderPhoto> headerPhotos = dao.getAll();
+        Collections.reverse(headerPhotos);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(this, headerPhotos));
-        pager.setOnLongClickListener(new View.OnLongClickListener() {
+        pager.setOnTouchListener(new View.OnTouchListener() {
+            private boolean moved;
+
             @Override
-            public boolean onLongClick(View view) {
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    moved = false;
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    moved = true;
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    if (!moved) {
+                        view.performClick();
+                    }
+                }
+                return false;
+            }
+        });
+        pager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ChoosePhotoActivity.class);
                 if (start) {
                     startActivityForResult(intent, BUTTONS_REQUEST_CODE);
                     start = false;
                 }
-                return false;
             }
-
         });
+
+
     }
 
     @Override
@@ -80,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         HeaderPhotoDao dao = DbHelper.getDb().getHeaderPhotoDao();
         dao.getAll();
+        List<HeaderPhoto> newPhotos;
         start = true;
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
@@ -114,7 +139,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Uri uri = data.getData();
                     HeaderPhoto photo = new HeaderPhoto(uri.toString());
                     dao.setHeaderPhoto(photo);
-                    Log.d("CREATE PHOTO: ", uri.toString());
+                    newPhotos = dao.getAll();
+                    Collections.reverse(newPhotos);
+                    pager.setAdapter(new MyPagerAdapter(this, newPhotos));
                     break;
                 case PICK_REQUEST_CODE:
                     try {
@@ -122,7 +149,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
                         dao.setHeaderPhoto(new HeaderPhoto(imageUri.toString()));
-                        Log.d("PICK PHOTO: ", imageUri.toString());
+                        newPhotos = dao.getAll();
+                        Collections.reverse(newPhotos);
+                        pager.setAdapter(new MyPagerAdapter(this, newPhotos));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
