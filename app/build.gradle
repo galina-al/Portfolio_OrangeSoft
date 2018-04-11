@@ -30,4 +30,6 @@ dependencies {
     compile 'nl.qbusict:cupboard:2.2.0'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
+    // or, for Android:
+    compile 'com.google.guava:guava:18.0'
 }

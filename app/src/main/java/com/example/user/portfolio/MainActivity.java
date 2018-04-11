@@ -2,47 +2,43 @@ package com.example.user.portfolio;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewParent;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
-import java.io.FileInputStream;
+import com.example.user.portfolio.util.Logic;
+import com.google.common.io.ByteStreams;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
 
     private boolean start = true;
     public static final int BUTTONS_REQUEST_CODE = 1;
     public static final int CAMERA_REQUEST_CODE = 2;
     public static final int PICK_REQUEST_CODE = 3;
+    public static final String FILE_PATH_KEY = "file_path";
     private ViewPager pager;
     private DrawerLayout drawerLayout;
+    private File file;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -50,6 +46,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            file = new File(savedInstanceState.getString(FILE_PATH_KEY));
+        } else {
+            file = null;
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,20 +89,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
                         menuItem.setChecked(true);
-                        // close drawer when item is tapped
                         drawerLayout.closeDrawers();
 
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
+                        switch (menuItem.getItemId()) {
+                            case R.id.nav_camera:
+                                Intent intent = new Intent(MainActivity.this, ListPhotoActivity.class);
+                                startActivity(intent);
+                                break;
+                        }
                         return true;
                     }
                 });
 
         HeaderPhotoDao dao = DbHelper.getDb().getHeaderPhotoDao();
         List<HeaderPhoto> headerPhotos = dao.getAll();
+        /*for (HeaderPhoto x : headerPhotos){
+            getPictureData(this, x);
+        }*/
         Collections.reverse(headerPhotos);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(this, headerPhotos));
@@ -111,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     moved = false;
+                    return true;
                 }
                 if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
                     moved = true;
@@ -138,17 +145,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View view) {
-
-       /* switch (view.getId()) {
-            case R.id.pager:
-                Intent intent = new Intent(this, ChoosePhotoActivity.class);
-                if (start) {
-                    startActivityForResult(intent, BUTTONS_REQUEST_CODE);
-                    start = false;
-                }
-                break;
-        }*/
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        if (file != null) {
+            outState.putString(FILE_PATH_KEY, file.getAbsolutePath());
+        } else {
+            outState.putString(FILE_PATH_KEY, null);
+        }
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     @Override
@@ -165,6 +168,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     int result = data.getIntExtra(ChoosePhotoActivity.TAKE_RESULT, 0);
                     if (result == ChoosePhotoActivity.TAKE_PHOTO) {
                         Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        try {
+                            file = Logic.createImageFile(MainActivity.this);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                         startActivityForResult(intentCamera, CAMERA_REQUEST_CODE);
                     }
                     if (result == ChoosePhotoActivity.PICK_PHOTO) {
@@ -174,23 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     break;
                 case CAMERA_REQUEST_CODE:
-                    //Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                    /*String fileName = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    FileOutputStream outputStream;
-                    try {
-                        outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
-                        outputStream.write(data.getData().toString().getBytes());
-                        outputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        FileInputStream  inputStream = openFileInput(fileName);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }*/
-                    Uri uri = data.getData();
-                    HeaderPhoto photo = new HeaderPhoto(uri.toString());
+                    HeaderPhoto photo = new HeaderPhoto(file.getAbsolutePath());
                     dao.setHeaderPhoto(photo);
                     newPhotos = dao.getAll();
                     Collections.reverse(newPhotos);
@@ -200,8 +193,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     try {
                         final Uri imageUri = data.getData();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                        final Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
-                        dao.setHeaderPhoto(new HeaderPhoto(imageUri.toString()));
+                        File file = null;
+                        try {
+                            file = Logic.createImageFile(this);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        try {
+                            ByteStreams.copy(imageStream, new FileOutputStream(file));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        dao.setHeaderPhoto(new HeaderPhoto(file.getAbsolutePath()));
                         newPhotos = dao.getAll();
                         Collections.reverse(newPhotos);
                         pager.setAdapter(new MyPagerAdapter(this, newPhotos));
@@ -211,4 +214,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.util.List;
 
 public class MyPagerAdapter extends PagerAdapter {
@@ -25,7 +26,7 @@ public class MyPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.view_pager_item, container, false);
         ImageView headerPhoto = (ImageView) view.findViewById(R.id.headerPhoto);
-        ImageHelper.displayImage(pages.get(position).localPath, headerPhoto, null);
+        ImageHelper.displayImage(Uri.fromFile(new File(pages.get(position).localPath)).toString(), headerPhoto, null);
         container.addView(view);
         Log.d("SHOW PHOTO ", pages.get(position).localPath.toString());
         return view;

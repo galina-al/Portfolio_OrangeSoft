@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:padding="16dp">
+        android:layout_height="85dp">
 
         <ImageView
             android:id="@+id/image_mini"
@@ -15,36 +14,59 @@
             android:layout_height="80dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="16dp" />
+            android:layout_marginRight="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/buffon_big" />
 
-        <TextView
-            android:id="@+id/photo_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/image_mini"
-            android:textSize="30sp"
-            android:text="name"/>
-
-        <TextView
-            android:id="@+id/photo_size"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/photo_name"
-            android:layout_alignBottom="@+id/photo_name"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="45dp"
-            android:layout_marginRight="45dp"
-            android:text="size" />
-
-        <TextView
-            android:id="@+id/photo_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/image_mini"
             android:layout_toEndOf="@+id/image_mini"
             android:layout_toRightOf="@+id/image_mini"
-            android:text="date" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/photo_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/image_mini"
+                android:text="name"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="5dp">
+
+                <TextView
+                    android:id="@+id/photo_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/photo_name"
+                    android:layout_alignBottom="@+id/photo_name"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="45dp"
+                    android:layout_marginRight="45dp"
+                    android:text="size" />
+
+                <TextView
+                    android:id="@+id/photo_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toEndOf="@+id/image_mini"
+                    android:layout_toRightOf="@+id/image_mini"
+                    android:text="date" />
+            </LinearLayout>
+        </LinearLayout>
+
+
     </RelativeLayout>
 </LinearLayout>
+
+
+
