@@ -1,4 +1,4 @@
-package com.example.user.portfolio;
+package com.example.user.portfolio.Entity;
 
 
 public class HeaderPhoto {

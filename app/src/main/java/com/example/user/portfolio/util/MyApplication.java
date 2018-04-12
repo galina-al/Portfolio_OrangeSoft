@@ -1,7 +1,8 @@
-package com.example.user.portfolio;
+package com.example.user.portfolio.util;
 
 import android.app.Application;
 
+import com.example.user.portfolio.DataBase.DbHelper;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 

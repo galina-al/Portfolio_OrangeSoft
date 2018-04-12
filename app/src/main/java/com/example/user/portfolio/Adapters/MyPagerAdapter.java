@@ -1,13 +1,15 @@
-package com.example.user.portfolio;
+package com.example.user.portfolio.Adapters;
 
 import android.content.Context;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.example.user.portfolio.Entity.HeaderPhoto;
+import com.example.user.portfolio.util.ImageHelper;
 
 import java.io.File;
 import java.util.List;
@@ -15,20 +17,23 @@ import java.util.List;
 public class MyPagerAdapter extends PagerAdapter {
 
     private Context context;
-    List<HeaderPhoto> pages;
+    private List<HeaderPhoto> pages;
+    private int viewId ;
+    private int imageViewId ;
 
-    public MyPagerAdapter(Context context, List<HeaderPhoto> pages) {
+    public MyPagerAdapter(Context context, List<HeaderPhoto> pages, int view_id, int image_view_id) {
         this.context = context;
         this.pages = pages;
+        this.viewId = view_id;
+        this.imageViewId = image_view_id;
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        View view = LayoutInflater.from(context).inflate(R.layout.view_pager_item, container, false);
-        ImageView headerPhoto = (ImageView) view.findViewById(R.id.headerPhoto);
-        ImageHelper.displayImage(Uri.fromFile(new File(pages.get(position).localPath)).toString(), headerPhoto, null);
+    public Object instantiateItem(ViewGroup container, int position ) {
+        View view = LayoutInflater.from(context).inflate(viewId, container, false);
+        ImageView headerPhoto = (ImageView) view.findViewById(imageViewId);
+        ImageHelper.displaySmallImage(Uri.fromFile(new File(pages.get(position).localPath)).toString(), headerPhoto);
         container.addView(view);
-        Log.d("SHOW PHOTO ", pages.get(position).localPath.toString());
         return view;
     }
 

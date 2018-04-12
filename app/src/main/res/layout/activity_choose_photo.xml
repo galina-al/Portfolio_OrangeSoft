@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     android:orientation="vertical"
-    tools:context="com.example.user.portfolio.ChoosePhotoActivity">
+    tools:context="com.example.user.portfolio.Activity.ChoosePhotoActivity">
 
     <View
         android:id="@+id/close_view"

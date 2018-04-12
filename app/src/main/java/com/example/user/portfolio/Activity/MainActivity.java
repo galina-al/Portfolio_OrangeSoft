@@ -1,4 +1,4 @@
-package com.example.user.portfolio;
+package com.example.user.portfolio.Activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -17,6 +18,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.user.portfolio.Adapters.MyPagerAdapter;
+import com.example.user.portfolio.DataBase.DbHelper;
+import com.example.user.portfolio.DataBase.HeaderPhotoDao;
+import com.example.user.portfolio.Entity.HeaderPhoto;
+import com.example.user.portfolio.R;
 import com.example.user.portfolio.util.Logic;
 import com.google.common.io.ByteStreams;
 
@@ -48,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
-            file = new File(savedInstanceState.getString(FILE_PATH_KEY));
+            if (savedInstanceState.getString(FILE_PATH_KEY) != null) {
+                file = new File(savedInstanceState.getString(FILE_PATH_KEY));
+            }
         } else {
             file = null;
         }
@@ -91,10 +99,14 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
                         drawerLayout.closeDrawers();
-
+                        Intent intent;
                         switch (menuItem.getItemId()) {
                             case R.id.nav_camera:
-                                Intent intent = new Intent(MainActivity.this, ListPhotoActivity.class);
+                                intent = new Intent(MainActivity.this, ListPhotoActivity.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.nav_wiki:
+                                intent = new Intent(MainActivity.this, WikiActivity.class);
                                 startActivity(intent);
                                 break;
                         }
@@ -104,15 +116,12 @@ public class MainActivity extends AppCompatActivity {
 
         HeaderPhotoDao dao = DbHelper.getDb().getHeaderPhotoDao();
         List<HeaderPhoto> headerPhotos = dao.getAll();
-        /*for (HeaderPhoto x : headerPhotos){
-            getPictureData(this, x);
-        }*/
         Collections.reverse(headerPhotos);
+
         pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(new MyPagerAdapter(this, headerPhotos));
+        pager.setAdapter(new MyPagerAdapter(this, headerPhotos, R.layout.view_pager_item , R.id.headerPhoto));
         pager.setOnTouchListener(new View.OnTouchListener() {
             private boolean moved;
-
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -130,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         pager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,8 +150,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -187,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     dao.setHeaderPhoto(photo);
                     newPhotos = dao.getAll();
                     Collections.reverse(newPhotos);
-                    pager.setAdapter(new MyPagerAdapter(this, newPhotos));
+                    pager.setAdapter(new MyPagerAdapter(this, newPhotos, R.layout.view_pager_item, R.id.headerPhoto));
                     break;
                 case PICK_REQUEST_CODE:
                     try {
@@ -207,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                         dao.setHeaderPhoto(new HeaderPhoto(file.getAbsolutePath()));
                         newPhotos = dao.getAll();
                         Collections.reverse(newPhotos);
-                        pager.setAdapter(new MyPagerAdapter(this, newPhotos));
+                        pager.setAdapter(new MyPagerAdapter(this, newPhotos, R.layout.view_pager_item, R.id.headerPhoto));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

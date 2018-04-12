@@ -1,8 +1,10 @@
-package com.example.user.portfolio;
+package com.example.user.portfolio.DataBase;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.user.portfolio.Entity.HeaderPhoto;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 

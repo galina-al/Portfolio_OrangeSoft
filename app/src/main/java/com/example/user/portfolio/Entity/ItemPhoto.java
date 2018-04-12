@@ -1,4 +1,4 @@
-package com.example.user.portfolio;
+package com.example.user.portfolio.Entity;
 
 
 import android.content.ContentResolver;
@@ -16,10 +16,10 @@ import java.util.Date;
 
 
 public class ItemPhoto {
-    String name;
-    String size;
-    String date;
-    String path;
+    public String name;
+    public String size;
+    public String date;
+    public String path;
 
     public ItemPhoto(String name, String size, String date, String path) {
         this.name = name;

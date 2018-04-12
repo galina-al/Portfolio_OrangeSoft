@@ -1,4 +1,4 @@
-package com.example.user.portfolio;
+package com.example.user.portfolio.Adapters;
 
 
 import android.net.Uri;
@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.user.portfolio.Entity.ItemPhoto;
+import com.example.user.portfolio.util.ImageHelper;
+import com.example.user.portfolio.R;
 
 import java.io.File;
 import java.util.List;
@@ -54,7 +58,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         holder.name.setText(photos.get(position).name);
         holder.size.setText(photos.get(position).size);
         holder.date.setText(photos.get(position).date);
-        ImageHelper.displayImage(Uri.fromFile(new File(photos.get(position).path)).toString(), holder.imageMini, null);
+        ImageHelper.displaySmallImage(Uri.fromFile(new File(photos.get(position).path)).toString(), holder.imageMini);
     }
 
     @Override

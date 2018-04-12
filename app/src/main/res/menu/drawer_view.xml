@@ -5,5 +5,9 @@
             android:id="@+id/nav_camera"
             android:icon="@android:drawable/ic_menu_camera"
             android:title="Photo" />
+        <item
+            android:id="@+id/nav_wiki"
+            android:icon="@android:drawable/ic_input_get"
+            android:title="Wiki" />
     </group>
 </menu>
