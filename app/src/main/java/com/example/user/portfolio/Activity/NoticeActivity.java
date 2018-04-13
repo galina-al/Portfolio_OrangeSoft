@@ -1,9 +1,9 @@
 package com.example.user.portfolio.Activity;
 
-import android.content.BroadcastReceiver;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -11,32 +11,29 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.user.portfolio.R;
-import com.example.user.portfolio.Receiver;
-import com.example.user.portfolio.Service.MyIntentService;
+import com.example.user.portfolio.util.Logic;
 
-import static com.example.user.portfolio.util.CONSTANTS.*;
+import static com.example.user.portfolio.util.CONSTANTS.ACTION_NOTICE;
 
+public class NoticeActivity extends AppCompatActivity implements View.OnClickListener {
 
-public class WikiActivity extends AppCompatActivity {
-
-    private WebView webView;
-    private SharedPreferences preferences;
-    private BroadcastReceiver receiver;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+   // private AlarmReceiver alarmReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wiki);
+        setContentView(R.layout.activity_notice);
 
+        //alarmReceiver = new AlarmReceiver(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -69,7 +66,7 @@ public class WikiActivity extends AppCompatActivity {
         );
 
         navigationView = findViewById(R.id.nav_view);
-        navigationView.setCheckedItem(R.id.nav_wiki);
+        navigationView.setCheckedItem(R.id.nav_notice);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -79,39 +76,30 @@ public class WikiActivity extends AppCompatActivity {
                         Intent intent;
                         switch (menuItem.getItemId()) {
                             case R.id.nav_camera:
-                                intent = new Intent(WikiActivity.this, ListPhotoActivity.class);
+                                intent = new Intent(NoticeActivity.this, ListPhotoActivity.class);
                                 startActivity(intent);
                                 break;
                             case R.id.nav_wiki:
+                                if (Logic.isNetworkAvailable(NoticeActivity.this)) {
+                                    intent = new Intent(NoticeActivity.this, WikiActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(NoticeActivity.this, "Internet connection is absent!", Toast.LENGTH_LONG).show();
+                                }
                                 break;
                             case R.id.nav_home:
-                                intent = new Intent(WikiActivity.this, MainActivity.class);
+                                intent = new Intent(NoticeActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 break;
                             case R.id.nav_notice:
-                                intent = new Intent(WikiActivity.this, NoticeActivity.class);
-                                startActivity(intent);
                                 break;
                         }
                         return true;
                     }
                 });
-        receiver = new Receiver(this);
 
-
-        webView = (WebView) findViewById(R.id.web_view);
-        webView.setWebViewClient(new MyWebViewClient());
-        webView.getSettings().setJavaScriptEnabled(true);
-        preferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
-        String data = preferences.getString(SAVED_TEXT, "");
-
-        if (!TextUtils.isEmpty(data)) {
-            webView.loadDataWithBaseURL(WIKI_URL, data, "text/html; charset=UTF-8", "UTF-8", null);
-
-        } else {
-            Intent intent = new Intent(this, MyIntentService.class);
-            startService(intent);
-        }
+        Button add_notice = (Button) findViewById(R.id.add_notice);
+        add_notice.setOnClickListener(this);
     }
 
     @Override
@@ -124,40 +112,42 @@ public class WikiActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateContent() {
-        preferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
-        String data = preferences.getString(SAVED_TEXT, "");
-        webView.loadDataWithBaseURL(WIKI_URL, data, "text/html; charset=UTF-8", "UTF-8", null);
+    private void scheduleAlarm() {
+        /* Request the AlarmManager object */
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        /* Create the PendingIntent that will launch the BroadcastReceiver */
+        PendingIntent pending = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_NOTICE), 0);
+
+        /* Schedule Alarm with and authorize to WakeUp the device during sleep */
+        manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 7 * 1000, pending);
+        Log.d("ALARM", "NOTICE");
     }
 
-    private class MyWebViewClient extends WebViewClient {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
+    private void cancelAlarm() {
+        /* Request the AlarmManager object */
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        /* Create the PendingIntent that would have launched the BroadcastReceiver */
+        PendingIntent pending = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_NOTICE), 0);
+
+        /* Cancel the alarm associated with that PendingIntent */
+        manager.cancel(pending);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.add_notice) {
+            scheduleAlarm();
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        navigationView.setCheckedItem(R.id.nav_wiki);
-        IntentFilter intentFilter = new IntentFilter(ACTION_DOWNLOAD_SITE);
-        this.registerReceiver(receiver, intentFilter);
+        navigationView.setCheckedItem(R.id.nav_notice);
+        //this.registerReceiver(alarmReceiver, new IntentFilter(ACTION_NOTICE));
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        this.unregisterReceiver(receiver);
-    }
 
-    @Override
-    public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
-        }
-    }
 }

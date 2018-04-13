@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@android:drawable/ic_dialog_dialer"
+            android:title="Home" />
         <item
             android:id="@+id/nav_camera"
             android:icon="@android:drawable/ic_menu_camera"
@@ -9,5 +14,10 @@
             android:id="@+id/nav_wiki"
             android:icon="@android:drawable/ic_input_get"
             android:title="Wiki" />
+        <item
+            android:id="@+id/nav_notice"
+            android:icon="@android:drawable/ic_lock_idle_alarm"
+            android:title="Notice" />
+
     </group>
 </menu>

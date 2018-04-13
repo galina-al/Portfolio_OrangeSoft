@@ -14,25 +14,36 @@ import com.example.user.portfolio.util.ImageHelper;
 import java.io.File;
 import java.util.List;
 
+import uk.co.senab.photoview.PhotoView;
+
+import static com.example.user.portfolio.util.CONSTANTS.*;
+
 public class MyPagerAdapter extends PagerAdapter {
 
+    private final String flagView;
     private Context context;
     private List<HeaderPhoto> pages;
     private int viewId ;
     private int imageViewId ;
 
-    public MyPagerAdapter(Context context, List<HeaderPhoto> pages, int view_id, int image_view_id) {
+    public MyPagerAdapter(Context context, List<HeaderPhoto> pages, int viewId, int imageViewId, String flagView) {
         this.context = context;
         this.pages = pages;
-        this.viewId = view_id;
-        this.imageViewId = image_view_id;
+        this.viewId = viewId;
+        this.imageViewId = imageViewId;
+        this.flagView = flagView;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position ) {
         View view = LayoutInflater.from(context).inflate(viewId, container, false);
-        ImageView headerPhoto = (ImageView) view.findViewById(imageViewId);
-        ImageHelper.displaySmallImage(Uri.fromFile(new File(pages.get(position).localPath)).toString(), headerPhoto);
+        if(this.flagView == IMAGE_FLAG){
+            ImageView imageView = (ImageView) view.findViewById(imageViewId);
+            ImageHelper.displaySmallImage(Uri.fromFile(new File(pages.get(position).localPath)).toString(), imageView);
+        } else if (this.flagView == PHOTO_FLAG){
+            PhotoView photoView = (PhotoView) view.findViewById(imageViewId);
+            ImageHelper.displaySmallImage(Uri.fromFile(new File(pages.get(position).localPath)).toString(), photoView);
+        }
         container.addView(view);
         return view;
     }

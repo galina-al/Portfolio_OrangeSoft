@@ -18,8 +18,9 @@ import java.util.List;
 
 import uk.co.senab.photoview.PhotoView;
 
-import static com.example.user.portfolio.Activity.ListPhotoActivity.PHOTO_PATH_SHOW;
-import static com.example.user.portfolio.Activity.ListPhotoActivity.PHOTO_POSITION_SHOW;
+import static com.example.user.portfolio.util.CONSTANTS.PHOTO_FLAG;
+import static com.example.user.portfolio.util.CONSTANTS.PHOTO_PATH_SHOW;
+import static com.example.user.portfolio.util.CONSTANTS.PHOTO_POSITION_SHOW;
 
 public class ShowPhotoActivity extends AppCompatActivity {
 
@@ -47,7 +48,7 @@ public class ShowPhotoActivity extends AppCompatActivity {
         Collections.reverse(headerPhotos);
 
         photoPager = (ViewPager) findViewById(R.id.photo_pager);
-        photoPager.setAdapter(new MyPagerAdapter(this, headerPhotos, R.layout.photo_pager_item, R.id.show_photo));
+        photoPager.setAdapter(new MyPagerAdapter(this, headerPhotos, R.layout.photo_pager_item, R.id.show_photo, PHOTO_FLAG));
         photoPager.setCurrentItem(position);
     }
 

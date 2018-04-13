@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.user.portfolio.Adapters.MyPagerAdapter;
 import com.example.user.portfolio.DataBase.DbHelper;
@@ -34,17 +35,16 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
+import static com.example.user.portfolio.util.CONSTANTS.*;
+
 public class MainActivity extends AppCompatActivity {
 
 
     private boolean start = true;
-    public static final int BUTTONS_REQUEST_CODE = 1;
-    public static final int CAMERA_REQUEST_CODE = 2;
-    public static final int PICK_REQUEST_CODE = 3;
-    public static final String FILE_PATH_KEY = "file_path";
     private ViewPager pager;
     private DrawerLayout drawerLayout;
     private File file;
+    private NavigationView navigationView;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.nav_home);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -106,7 +107,17 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 break;
                             case R.id.nav_wiki:
-                                intent = new Intent(MainActivity.this, WikiActivity.class);
+                                if (Logic.isNetworkAvailable(MainActivity.this)) {
+                                    intent = new Intent(MainActivity.this, WikiActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Internet connection is absent!", Toast.LENGTH_LONG).show();
+                                }
+                                break;
+                            case R.id.nav_home:
+                                break;
+                            case R.id.nav_notice:
+                                intent = new Intent(MainActivity.this, NoticeActivity.class);
                                 startActivity(intent);
                                 break;
                         }
@@ -119,9 +130,10 @@ public class MainActivity extends AppCompatActivity {
         Collections.reverse(headerPhotos);
 
         pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(new MyPagerAdapter(this, headerPhotos, R.layout.view_pager_item , R.id.headerPhoto));
+        pager.setAdapter(new MyPagerAdapter(this, headerPhotos, R.layout.view_pager_item, R.id.headerPhoto, IMAGE_FLAG));
         pager.setOnTouchListener(new View.OnTouchListener() {
             private boolean moved;
+
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -150,6 +162,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        navigationView.setCheckedItem(R.id.nav_home);
     }
 
     @Override
@@ -205,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                     dao.setHeaderPhoto(photo);
                     newPhotos = dao.getAll();
                     Collections.reverse(newPhotos);
-                    pager.setAdapter(new MyPagerAdapter(this, newPhotos, R.layout.view_pager_item, R.id.headerPhoto));
+                    pager.setAdapter(new MyPagerAdapter(this, newPhotos, R.layout.view_pager_item, R.id.headerPhoto, IMAGE_FLAG));
                     break;
                 case PICK_REQUEST_CODE:
                     try {
@@ -225,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                         dao.setHeaderPhoto(new HeaderPhoto(file.getAbsolutePath()));
                         newPhotos = dao.getAll();
                         Collections.reverse(newPhotos);
-                        pager.setAdapter(new MyPagerAdapter(this, newPhotos, R.layout.view_pager_item, R.id.headerPhoto));
+                        pager.setAdapter(new MyPagerAdapter(this, newPhotos, R.layout.view_pager_item, R.id.headerPhoto, IMAGE_FLAG));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

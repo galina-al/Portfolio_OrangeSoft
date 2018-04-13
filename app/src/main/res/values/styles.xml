@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-   <style name="AppTheme.Main">
+   <style name="Theme.AppCompat.NoActionBar.Main">
        <item name="android:windowIsTranslucent">true</item>
        <item name="android:windowBackground">@color/backgroundActivityChoose</item>
        <item name="android:windowContentOverlay">@null</item>
