@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.example.user.portfolio.Activity.NoticeActivity;
+
+import static com.example.user.portfolio.util.CONSTANTS.CONTENT_TEXT;
 
 public class AlarmReceiver extends BroadcastReceiver {
     private NoticeActivity activity;
@@ -24,16 +27,24 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        createNotification(context);
+
+        if(intent.getExtras() != null) {
+            String contentText = intent.getStringExtra(CONTENT_TEXT);
+            Log.d("CONTENT_TEXT", contentText);
+            createNotification(context, contentText);
+        } else {
+            createNotification(context, "///");
+            Log.d("CONTENT_TEXT", "NULL");
+        }
 
     }
 
-    public void createNotification(Context context) {
+    public void createNotification(Context context, String contentText) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(android.support.v4.R.drawable.notification_icon_background)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setContentTitle("Notice")
+                        .setContentText(contentText);
         Intent resultIntent = new Intent(context, NoticeActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);

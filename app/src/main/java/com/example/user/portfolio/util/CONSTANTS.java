@@ -16,4 +16,5 @@ public class CONSTANTS {
     public static final String SERVICE_REQUEST = "service_request";
     public static final String SHARED_PREFERENCES = "shared_preferences";
     public static final String ACTION_DOWNLOAD_SITE = "action_download_site";
+    public static final String CONTENT_TEXT = "content_text";
 }

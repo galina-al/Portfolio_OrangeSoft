@@ -1,7 +1,10 @@
 package com.example.user.portfolio.Activity;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,25 +18,71 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.user.portfolio.R;
 import com.example.user.portfolio.util.Logic;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.example.user.portfolio.util.CONSTANTS.ACTION_NOTICE;
+import static com.example.user.portfolio.util.CONSTANTS.CONTENT_TEXT;
 
 public class NoticeActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private String description;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-   // private AlarmReceiver alarmReceiver;
+    private TextView selectDate;
+    private TextView selectTime;
+    private EditText editDescription;
+    private DatePickerDialog.OnDateSetListener dateSetListener;
+    private TimePickerDialog.OnTimeSetListener timeSetListener;
+    private int selectYear;
+    private int selectMonth;
+    private int selectDay;
+    private int selectHour;
+    private int selectMinute;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notice);
 
-        //alarmReceiver = new AlarmReceiver(this);
+        selectDate = (TextView) findViewById(R.id.selectDate);
+        selectTime = (TextView) findViewById(R.id.selectTime);
+        editDescription = (EditText) findViewById(R.id.editDescription);
+
+        selectDate.setOnClickListener(this);
+        selectTime.setOnClickListener(this);
+
+        dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                selectYear = year;
+                selectMonth = month + 1;
+                selectDay = dayOfMonth;
+                selectDate.setText(selectDay + "/" + selectMonth + "/" + selectYear);
+            }
+        };
+
+        timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                selectHour = hourOfDay;
+                selectMinute = minute;
+                selectTime.setText(selectHour + ":" + selectMinute);
+            }
+        };
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -45,22 +94,18 @@ public class NoticeActivity extends AppCompatActivity implements View.OnClickLis
                 new DrawerLayout.DrawerListener() {
                     @Override
                     public void onDrawerSlide(View drawerView, float slideOffset) {
-                        // Respond when the drawer's position changes
                     }
 
                     @Override
                     public void onDrawerOpened(View drawerView) {
-                        // Respond when the drawer is opened
                     }
 
                     @Override
                     public void onDrawerClosed(View drawerView) {
-                        // Respond when the drawer is closed
                     }
 
                     @Override
                     public void onDrawerStateChanged(int newState) {
-                        // Respond when the drawer motion state changes
                     }
                 }
         );
@@ -113,40 +158,64 @@ public class NoticeActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void scheduleAlarm() {
-        /* Request the AlarmManager object */
+        description = editDescription.getText().toString();
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        /* Create the PendingIntent that will launch the BroadcastReceiver */
-        PendingIntent pending = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_NOTICE), 0);
+        PendingIntent pending = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_NOTICE).putExtra(CONTENT_TEXT, description), 0);
+        try {
+            String str = selectYear + "-" + selectMonth + "-" + selectDay + "-" + selectHour + "- " + selectMinute;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 
-        /* Schedule Alarm with and authorize to WakeUp the device during sleep */
-        manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 7 * 1000, pending);
-        Log.d("ALARM", "NOTICE");
+            Date date1 = format.parse(str);
+            long millis = date1.getTime();
+            Log.d("DATE", date1.toString() + " desc: " +
+                    "" + description);
+
+            manager.setExact(AlarmManager.RTC_WAKEUP, millis, pending);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private void cancelAlarm() {
-        /* Request the AlarmManager object */
+    /*private void cancelAlarm() {
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        /* Create the PendingIntent that would have launched the BroadcastReceiver */
         PendingIntent pending = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_NOTICE), 0);
 
-        /* Cancel the alarm associated with that PendingIntent */
         manager.cancel(pending);
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.add_notice) {
-            scheduleAlarm();
+
+        Calendar calendar = Calendar.getInstance();
+        switch (v.getId()) {
+            case R.id.add_notice:
+                scheduleAlarm();
+                break;
+            case R.id.selectDate:
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(this, AlertDialog.THEME_HOLO_DARK, dateSetListener, year, month, day);
+                datePickerDialog.show();
+                break;
+            case R.id.selectTime:
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(this, AlertDialog.THEME_HOLO_DARK, timeSetListener, hour, minute, true);
+                timePickerDialog.show();
+                break;
         }
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         navigationView.setCheckedItem(R.id.nav_notice);
-        //this.registerReceiver(alarmReceiver, new IntentFilter(ACTION_NOTICE));
     }
 
 
